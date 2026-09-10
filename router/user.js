@@ -9,7 +9,9 @@ router.get('/addproduct',(req,res)=>{
     res.render('form')
 })
 
+
 router.post('/productadd',createProduct)
+
 
 router.get('/product',getData)
 
