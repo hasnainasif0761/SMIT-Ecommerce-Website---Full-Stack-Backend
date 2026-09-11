@@ -132,8 +132,150 @@ const getData = async (req, res) => {
 
 };
 
+const updateProduct = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const {
+            name,
+            price,
+            delPrice,
+            rating,
+            img,
+            description,
+            size,
+            colors
+        } = req.body;
+
+
+        // Colors ko array mein convert karna
+        let productColors = [];
+
+        if (Array.isArray(colors)) {
+
+            productColors = colors;
+
+        } else if (colors) {
+
+            productColors = [colors];
+
+        }
+
+
+        // Product update
+        const updatedProduct = await ProductModel.findByIdAndUpdate(
+
+            id,
+
+            {
+                name,
+                price,
+                delPrice,
+                rating,
+                img,
+                description,
+                size,
+                colors: productColors
+            },
+
+            {
+                new: true,
+                runValidators: true
+            }
+
+        );
+
+
+        // Product nahi mila
+        if (!updatedProduct) {
+
+            return res.status(404).json({
+                message: "Product not found"
+            });
+
+        }
+
+
+        return res.status(200).json({
+
+            message: "Product updated successfully",
+
+            product: updatedProduct
+
+        });
+
+
+    } catch (error) {
+
+        console.log("Update Product Error:", error);
+
+        return res.status(500).json({
+
+            message: "Something went wrong",
+
+            error: error.message
+
+        });
+
+    }
+
+};
+
+
+
+const deleteProduct = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        const deletedProduct =
+            await ProductModel.findByIdAndDelete(id);
+
+
+        // Product nahi mila
+        if (!deletedProduct) {
+
+            return res.status(404).json({
+
+                message: "Product not found"
+
+            });
+
+        }
+
+
+        return res.status(200).json({
+
+            message: "Product deleted successfully",
+
+            product: deletedProduct
+
+        });
+
+
+    } catch (error) {
+
+        console.log("Delete Product Error:", error);
+
+        return res.status(500).json({
+
+            message: "Something went wrong",
+
+            error: error.message
+
+        });
+
+    }
+
+};
 
 module.exports = {
     createProduct,
-    getData
+    getData,
+    updateProduct,
+    deleteProduct
 };
